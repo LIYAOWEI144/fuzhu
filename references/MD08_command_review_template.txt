@@ -1,0 +1,24 @@
+GROMACS 命令审计模板
+
+此文件仅作为命令审计的格式参考；实际项目应由用户指定输出目录后生成。
+
+原命令：gmx grompp ... -maxwarn 3
+建议命令：gmx grompp ...
+原因：先在不忽略 warning 的情况下预处理。仅在逐条确认 warning 无害后，才允许使用最小必要的 -maxwarn 数值。
+
+原命令：gmx solvate -cp rep_newbox.gro -cs spc216.gro -o rep_solv.gro -p merge_topol.top
+建议命令：保留坐标命令，但先确认 merge_topol.top 包含与所选水模型匹配的 SOL 定义和原子类型。
+原因：水坐标文件不会自动提供 SOL 的拓扑定义；CHARMM/CGenFF 体系必须使用兼容的水模型参数。
+
+原命令：gmx genrestr -f lig.gro -o posre_lig.itp -fc 1000 1000 1000
+建议命令：仅在需要约束配体时生成并在 LIG.itp 中以独立宏包含该文件；MDP 同时定义对应宏和数值常数。
+原因：生成 posre 文件本身不会让拓扑读取它，共用 POSRES 宏还可能意外约束配体或留下未定义的力常数。
+
+原命令：生产阶段使用 pcoupl = berendsen
+建议命令：生产阶段使用经本机版本验证的 C-rescale 或其他正确系综压强耦合方案。
+原因：Berendsen 用于预平衡可以，但不能生成严格正确的生产期 NPT 系综。
+
+原命令：同时设置 nstxout、nstvout 和 nstxout-compressed 为非零
+建议命令：结构分析通常保留 nstxout-compressed，并将 nstxout/nstvout 设为 0；输出间隔由所需时间分辨率决定。
+原因：避免同时产生全精度坐标、速度和压缩坐标轨迹而占用几十 GB 空间。
+

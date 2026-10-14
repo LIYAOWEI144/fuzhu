@@ -1,0 +1,5 @@
+interface:
+  display_name: GROMACS Analysis Assistant
+  short_description: Audit GROMACS commands and preflight production MD
+  default_prompt: Audit my GROMACS package and command file before I run equilibration or production MD.
+
